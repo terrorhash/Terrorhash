@@ -19,6 +19,4 @@ export type EventItem = {
   { id: 5, country: "Japan", region: "Tokyo", type: "Attack", fatalities: 2, injuries: 1, date: "2025-08-10", lng: 139.6917, lat: 35.6895 },
 ];
 
-];
-
 export default events;
