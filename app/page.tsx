@@ -72,7 +72,7 @@ export default function Page() {
               // Dummy-Positions bis echte Koordinaten vorliegen:
               geometry: {
                 type: "Point",
-                coordinates: [2 + (e.id % 8) * 4, 44 + (e.id % 6) * 3]
+                coordinates: [e.lng, e.lat],
               }
             }))
           }}
