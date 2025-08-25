@@ -87,4 +87,75 @@ export default async function Page() {
       </section>
     </main>
   );
+"use client";
+
+import React, { useState, useEffect } from "react";
+import SearchBar from "./components/SearchBar";
+import TerrorMap from "./components/TerrorMap";
+
+type EventItem = {
+  id: number;
+  country: string;
+  region: string;
+  type: string;
+  fatalities: number;
+  injuries: number;
+  date: string;
+};
+
+export default function Page() {
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [flyTo, setFlyTo] = useState<[number, number] | null>(null);
+  const [bbox, setBbox] = useState<number[] | null>(null);
+
+  // Lade Dummy-Events von /api/events
+  useEffect(() => {
+    async function loadEvents() {
+      try {
+        const res = await fetch("/api/events");
+        const data = await res.json();
+        setEvents(data);
+      } catch (err) {
+        console.error("Fehler beim Laden der Events:", err);
+      }
+    }
+    loadEvents();
+  }, []);
+
+  return (
+    <div className="wrap">
+      {/* Sidebar mit Suche */}
+      <aside className="sidebar">
+        <h2>TerrorHash – Risk Map</h2>
+        <SearchBar onLocate={(center, box) => {
+          setFlyTo(center);
+          setBbox(box || null);
+        }} />
+        <ul>
+          {events.map((e) => (
+            <li key={e.id}>
+              <strong>{e.country}</strong> ({e.region}) – {e.type}<br/>
+              Fatalities: {e.fatalities}, Injuries: {e.injuries}, Date: {e.date}
+            </li>
+          ))}
+        </ul>
+      </aside>
+
+      {/* Karte */}
+      <main className="main">
+        <TerrorMap 
+          events={{
+            type: "FeatureCollection",
+            features: events.map(e => ({
+              type: "Feature",
+              geometry: { type: "Point", coordinates: [13.4, 52.5] }, // Dummy coords
+              properties: e
+            }))
+          }}
+          flyTo={flyTo}
+          bbox={bbox}
+        />
+      </main>
+    </div>
+  );
 }
