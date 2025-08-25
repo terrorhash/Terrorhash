@@ -23,10 +23,10 @@ export default function Page() {
     (async () => {
       try {
         const res = await fetch("/api/events", { cache: "no-store" });
-        const data: EventItem[] = await res.json();
+        const data = await res.json();
         setEvents(data);
-      } catch (e) {
-        console.error("events load error", e);
+      } catch (err) {
+        console.error(err);
       }
     })();
   }, []);
