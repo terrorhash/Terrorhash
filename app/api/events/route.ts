@@ -1,9 +1,5 @@
 import { NextResponse } from "next/server";
-
-const events = [
-  { id: 1, country: "Germany", region: "Berlin", type: "Attack", fatalities: 2, injuries: 5, date: "2025-08-20" },
-  { id: 2, country: "France", region: "Paris",  type: "Stabbing", fatalities: 0, injuries: 3, date: "2025-08-18" }
-];
+import events from "@/data/events";   // <— holt die Liste aus app/data/events.ts
 
 export async function GET() {
   return NextResponse.json(events);
