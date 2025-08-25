@@ -15,7 +15,7 @@ export default function SearchBar({ onLocate }: Props) {
 
     const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
       q.trim()
-    )}.json?access_token=${token}&types=country,region,place&limit=1`;
+    )}.json?access_token=${token}&types=country,region,place&limit=5`;
 
     try {
       const res = await fetch(url);
