@@ -65,9 +65,9 @@ export default function Page() {
     <main className="w-full h-[100dvh] overflow-hidden">
       <div className="absolute top-4 right-4 z-10">
         <SearchBar
-          onLocate={(center, bbox) => {
+          onLocate={(center) => {
             setFlyTo(center ?? null);
-            setBbox(bbox ?? null);
+            setBbox(null);
           }}
         />
       </div>
