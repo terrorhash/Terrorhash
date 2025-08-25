@@ -16,8 +16,7 @@ export type EventItem = {
   lat: number;    // Latitude
 };
 
-// WICHTIG: kein Cache, damit neue Daten sofort da sind
-export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 async function getEvents(): Promise<EventItem[]> {
   const res = await fetch("/api/events", { cache: "no-store" });
