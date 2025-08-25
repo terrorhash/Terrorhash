@@ -20,7 +20,7 @@ export default function TerrorMap({ events, flyTo, bbox }: Props) {
     const map = new mapboxgl.Map({
       container: containerRef.current,
       style: "mapbox://styles/mapbox/dark-v11",
-      center: [0, 20],
+      center: [0, 60],
       zoom: 2
     });
     map.addControl(new mapboxgl.NavigationControl());
