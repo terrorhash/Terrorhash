@@ -25,8 +25,8 @@ export default function Page() {
     (async () => {
       try {
         const res = await fetch("/api/events", { cache: "no-store" });
-        const data = await res.json();
-        setEvents(data);
+const data: EventItem[] = await res.json();
+setEvents(data);
       } catch (err) {
         console.error(err);
       }
