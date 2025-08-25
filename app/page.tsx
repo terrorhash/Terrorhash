@@ -12,6 +12,8 @@ type EventItem = {
   fatalities: number;
   injuries: number;
   date: string;
+  lng: number; 
+  lat: number ;
 };
 
 export default function Page() {
