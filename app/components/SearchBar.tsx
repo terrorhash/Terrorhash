@@ -1,41 +1,57 @@
-"use client";
-import { useState } from "react";
+'use client';
+
+import React, { useState } from 'react';
 
 type Props = {
-  onLocate: (arg: { center: [number, number]; bbox?: number[] }) => void;
+  // zwei Positions-Argumente!
+  onLocate: (center: [number, number] | null, bbox: number[] | null) => void;
 };
 
 export default function SearchBar({ onLocate }: Props) {
-  const [q, setQ] = useState("");
+  const [value, setValue] = useState('');
 
-  async function handleSearch(e: React.FormEvent) {
+  async function doSearch(e: React.FormEvent) {
     e.preventDefault();
-    const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-    if (!q.trim() || !token) return;
 
-    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-      q.trim()
-    )}.json?access_token=${token}&types=country,region,place&limit=5`;
+    const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN as string | undefined;
+    if (!token || !value.trim()) {
+      onLocate(null, null);
+      return;
+    }
 
     try {
+      const url =
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/` +
+        `${encodeURIComponent(value)}.json?limit=1&access_token=${token}`;
       const res = await fetch(url);
       const data = await res.json();
+
       const f = data?.features?.[0];
-      if (f?.center) onLocate({ center: f.center as [number, number], bbox: f.bbox });
-    } catch (err) {
-      console.error("Geocoding error:", err);
+      if (!f) {
+        onLocate(null, null);
+        return;
+      }
+
+      const center = (f.center as [number, number]) ?? null;   // [lng, lat]
+      const bbox = (f.bbox as number[]) ?? null;                // [minX, minY, maxX, maxY] oder null
+
+      onLocate(center, bbox); // <<< zwei Argumente übergeben
+    } catch {
+      onLocate(null, null);
     }
   }
 
   return (
-    <form className="header" onSubmit={handleSearch}>
+    <form onSubmit={doSearch} className="flex gap-2">
       <input
-        placeholder="Land/Region suchen (z. B. Germany, Korea, USA)…"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        style={{ flex: 1, borderRadius: 999, border: 0, padding: "8px 12px" }}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        placeholder="Land/Region suchen z. B. DE, Berlin"
+        className="px-3 py-2 rounded-lg"
       />
-      <button className="btn" type="submit">Suche</button>
+      <button type="submit" className="px-3 py-2 rounded-lg bg-white/10">
+        Suche
+      </button>
     </form>
   );
 }
