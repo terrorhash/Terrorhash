@@ -15,45 +15,37 @@ type EventItem = {
 };
 
 export default function Page() {
-  // Daten aus /api/events clientseitig laden
   const [events, setEvents] = useState<EventItem[]>([]);
   const [flyTo, setFlyTo] = useState<[number, number] | null>(null);
   const [bbox, setBbox] = useState<number[] | null>(null);
 
   useEffect(() => {
-    async function load() {
+    (async () => {
       try {
-        const base = process.env.NEXT_PUBLIC_BASE_URL ?? "";
-        const res = await fetch(`${base}/api/events`, { cache: "no-store" });
+        const res = await fetch("/api/events", { cache: "no-store" });
         const data: EventItem[] = await res.json();
         setEvents(data);
-      } catch (err) {
-        console.error("load events error:", err);
+      } catch (e) {
+        console.error("events load error", e);
       }
-    }
-    load();
+    })();
   }, []);
-
-  const center: [number, number] = flyTo ?? [10, 51]; // Europa‑Mitte als Start
 
   return (
     <div className="app">
-      <header className="header">
-        <strong>TerrorHash</strong>
-        <SearchBar
-          onLocate={({ center, bbox }) => {
-            setFlyTo(center);
-            setBbox(bbox ?? null);
-          }}
-        />
-      </header>
+      <SearchBar
+        onLocate={({ center, bbox }) => {
+          setFlyTo(center);
+          setBbox(bbox ?? null);
+        }}
+      />
 
       <aside className="sidebar">
         <h3>Events</h3>
         <ul>
           {events.map((e) => (
             <li key={e.id}>
-              <strong>{e.country}</strong> ({e.region}) – {e.type}
+              <strong>{e.country}</strong> ({e.region}) — {e.type}
               <br />
               Fatalities: {e.fatalities}, Injuries: {e.injuries}, Date: {e.date}
             </li>
@@ -73,16 +65,16 @@ export default function Page() {
                 type: e.type,
                 date: e.date,
                 fatalities: e.fatalities,
-                injuries: e.injuries,
+                injuries: e.injuries
               },
-              // Dummy-Koordinaten (bis echte Koordinaten da sind)
+              // Dummy-Positions bis echte Koordinaten vorliegen:
               geometry: {
                 type: "Point",
-                coordinates: [2 + (e.id % 8) * 4, 44 + (e.id % 6) * 3],
-              },
-            })),
+                coordinates: [2 + (e.id % 8) * 4, 44 + (e.id % 6) * 3]
+              }
+            }))
           }}
-          flyTo={center}
+          flyTo={flyTo ?? undefined}
           bbox={bbox ?? undefined}
         />
       </main>
